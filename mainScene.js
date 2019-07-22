@@ -70,16 +70,16 @@ var IntroScene = new Phaser.Class({
 
 var introScene = new IntroScene({"key":"intro"});
  // * window.devicePixelRatio
-let screenWidth = window.screen.width;
-let screenHeight = window.screen.height;
+let screenWidth = window.screen.width * window.devicePixelRatio;
+let screenHeight = window.screen.height * window.devicePixelRatio;
 var mainScene = {preload: preload,
             create: create,
             update: update,
             key: 'main'}
     var config = {
         type: Phaser.AUTO,
-        width: screenWidth,
-        height: screenHeight,
+        width: 640,
+        height: 512,
         physics: {
             default: 'arcade',
             arcade: {
@@ -104,6 +104,28 @@ var mainScene = {preload: preload,
     game.scene.pause('main');
     var gameOver = false;
     //game.pause();
+    window.focus();
+    resize();
+    window.addEventListener('resize', resize, false);
+    function resize() {
+        console.log("window resized");
+    var canvas = document.querySelector('canvas');
+    console.log(canvas.id);
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
+    var windowRatio = windowWidth / windowHeight;
+    var gameRatio =  game.config.width / game.config.height;
+    if (windowRatio < gameRatio) {
+        canvas.width = windowWidth + 'px';
+        canvas.height = (windowWidth / gameRatio) + 'px';
+    } else {
+        canvas.width = (windowHeight * gameRatio) + 'px';
+        canvas.height = windowHeight + 'px';
+    }
+
+
+}
+
     function preload ()
     {   
         //load bin
