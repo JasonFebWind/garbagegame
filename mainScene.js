@@ -1,3 +1,4 @@
+//湿垃圾
 let wet_garbageData = [{"name_cn":"香蕉","type":0,"icon":"./local_asset/waste_category/wet/banana.png"},
                     {"name_cn":"西红柿","type":0,"icon":"./local_asset/waste_category/wet/icons8-tomato.png"},
                     {"name_cn":"黄瓜","type":0,"icon":"./local_asset/waste_category/wet/icons8-cucumber.png"},
@@ -68,9 +69,9 @@ var IntroScene = new Phaser.Class({
 });
 
 var introScene = new IntroScene({"key":"intro"});
-
-let screenWidth = window.screen.width * window.devicePixelRatio;
-let screenHeight = window.screen.height * window.devicePixelRatio;
+ // * window.devicePixelRatio
+let screenWidth = window.screen.width;
+let screenHeight = window.screen.height;
 var mainScene = {preload: preload,
             create: create,
             update: update,
@@ -101,13 +102,14 @@ var mainScene = {preload: preload,
     var startBtn;
     var game = new Phaser.Game(config);
     game.scene.pause('main');
+    var gameOver = false;
     //game.pause();
     function preload ()
     {   
         //load bin
         this.load.image('bin','local_asset/bins/bin.png');
         this.load.image('startBtn','local_asset/control_panel/icons8-start.png');
-        this.load.image('reStartBtn','local_asset/control_panel/icons8-restart.png');
+        this.load.image('restartBtn','local_asset/control_panel/icons8-restart.png');
         for(i=0; i<garbagePack.length;i++){
             let garageArray = garbagePack[i];
             for(j = 0; j<garageArray.length;j++){
@@ -140,7 +142,7 @@ var mainScene = {preload: preload,
         bin.body.allowGravity = false;
         bin.body.immovable = true;
         //adding frame rate/fps to screen
-        scoreLabel = this.add.text(screenWidth - 200 ,50,"分数:",{fontFamily: "Roboto Condensed",fontSize:'40px'});
+        scoreLabel = this.add.text(screenWidth - 200 ,50,"分数: 0",{fontFamily: "Roboto Condensed",fontSize:'40px'});
         scoreLabel.key = "scoreText";
 
         //add button
@@ -173,48 +175,95 @@ var mainScene = {preload: preload,
     var panel_square;
     var graphics;
     function bincollide(gameobj1,gameobj2,body1,body2){
+        if(gameOver == true){
+            return;
+        }
         gameobj1.destroy();
         if(binType != gameobj1.key){
-            game.scene.pause('main');
-            renderGameOver();
+            renderGameOver(gameobj1);
+            destroyGarbages()
+            timer.destroy();
+            gameOver = true;
             return;
         }
         score += 1;
         scoreLabel.text = "分数: " + score;
         console.log("colliding between" + gameobj1.key + "and" + gameobj2.key);
     }
+     var garbageGroup = new Array();
+    function destroyGarbages(){
+        for (i=0;i<garbageGroup.length;i++)
+        {
+            garbageGroup[i].destroy();
+        }
+    }
 
     var gameOverText;
     var restartBtn;
     var descriptionText;
-    function renderGameOver(){
+    var finalScoreText;
+    function renderGameOver(garbage){
+     var garbageParams = garbage.key.split("-");
+     var garbageType = "";
+     switch(garbageParams[0]){
+        case "0":
+        garbageType = "湿垃圾";
+            break;
+        case "1":
+        garbageType = "干垃圾";
+            break;
+        case "2":
+        garbageType = "可回收垃圾";
+            break;
+        case "3":
+        garbageType = "有害垃圾";
+            break;
+        default:
+            break;
+     }
+     console.log("garbage is " + garbageParams[0]);
+
      graphics = currentScene.add.graphics({ lineStyle: { width: 2, color: 0xaa0000 }, fillStyle: { color:0xaa0000} });
 
      panel_square = new Phaser.Geom.Rectangle();
-     panel_square.width = screenWidth - 100;
-     panel_square.height = screenHeight/2;
-     panel_square.x = screenWidth/2 - panel_square.width/2;
-     panel_square.y = screenHeight/2 - panel_square.height/2;
+     panel_square.width = screenWidth;
+     panel_square.height = screenHeight;
+     panel_square.x = 0;
+     panel_square.y = 0;
    
      graphics.fillRectShape(panel_square);
 
+    var finalScoreTextConfig = {fontFamily: "Roboto Condensed",fontSize:'120px',padding:{x:10,y:10}}
+     finalScoreText = currentScene.add.text(screenWidth/2 - 100, screenHeight/2 - 400, scoreLabel.text, finalScoreTextConfig);
+     finalScoreText.x = screenWidth/2 - finalScoreText.width/2;
+
      //add components to panel
-     var btnTextConfig = {fontFamily: "Roboto Condensed",fontSize:'80px',backgroundColor:'#27AE60',padding:{x:10,y:10}}
+     var btnTextConfig = {fontFamily: "Roboto Condensed",fontSize:'80px',padding:{x:10,y:10}}
      gameOverText = currentScene.add.text(screenWidth/2 - 100, screenHeight/2 - 200, '游戏结束', btnTextConfig);
      gameOverText.x = screenWidth/2 - gameOverText.width/2;
 
-     restartBtn = currentScene.add.sprite(screenWidth/2,screenHeight/2 + 100,'reStartBtn').setInteractive();
+     var descriptionTextConfig = {fontFamily: "Roboto Condensed",fontSize:'40px',padding:{x:10,y:10}}
+     descriptionText = currentScene.add.text(screenWidth/2 - 100, screenHeight/2 - 100, garbageParams[1] + "应该是" + garbageType, descriptionTextConfig);
+     descriptionText.x = screenWidth/2 - descriptionText.width/2;
+
+
+     restartBtn = currentScene.add.sprite(screenWidth/2,screenHeight/2 + 200,'restartBtn').setInteractive();
      restartBtn.inputEnabled = true;
+     restartBtn.key = "restartBtn";
      restartBtn.setDisplaySize(200,200);
      restartBtn.on('pointerdown',restartBtnClicked);
 
     }
 
     function restartBtnClicked(pointer){
+        console.log("restart btn clicked");
         graphics.clear();
         gameOverText.destroy();
         restartBtn.destroy();
+        finalScoreText.destroy();
         descriptionText.destroy();
+        gameOver = false;
+        scoreLabel.text = "分数: 0";
         startRainTimer();
     }
 
@@ -227,7 +276,6 @@ var mainScene = {preload: preload,
     function update (){
         
     }
-
     function generateGarbage(){
         //create garbage
         let randomX = Phaser.Math.Between(20,screenWidth-20);
@@ -240,7 +288,8 @@ var mainScene = {preload: preload,
         currentScene.physics.world.enable(garbage);
         garbage.setDisplaySize(100,100);
         garbage.draggable = true;
-        garbage.key = randomGarbage["type"];
+        garbage.key = randomGarbage["type"] + "-" + randomGarbage["name_cn"];
         garbage.onCollide = true;
+        garbageGroup.push(garbage);
         currentScene.physics.add.collider(garbage,bin,bincollide,processCallback);
     }
