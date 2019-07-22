@@ -52,6 +52,13 @@ let hazardous_garbageData = [{"name_cn":"温度计","type":3,"icon":"./local_ass
 
 let garbagePack = [wet_garbageData,dry_garbageData,recyclable_garbageData,hazardous_garbageData];
 
+
+var myCustomCanvas = document.createElement('canvas');
+
+myCustomCanvas.id = 'canvas';
+
+document.body.appendChild(myCustomCanvas);
+
 //start of game
 
 var IntroScene = new Phaser.Class({
@@ -77,9 +84,10 @@ var mainScene = {preload: preload,
             update: update,
             key: 'main'}
     var config = {
-        type: Phaser.AUTO,
-        width: 640,
-        height: 512,
+        type: Phaser.CANVAS,
+        width: screenWidth,
+        height: screenHeight,
+        canvas: document.getElementById('canvas'),
         physics: {
             default: 'arcade',
             arcade: {
@@ -116,11 +124,11 @@ var mainScene = {preload: preload,
     var windowRatio = windowWidth / windowHeight;
     var gameRatio =  game.config.width / game.config.height;
     if (windowRatio < gameRatio) {
-        canvas.width = windowWidth + 'px';
-        canvas.height = (windowWidth / gameRatio) + 'px';
+        canvas.style.width = windowWidth + 'px';
+        canvas.style.height = (windowWidth / gameRatio) + 'px';
     } else {
-        canvas.width = (windowHeight * gameRatio) + 'px';
-        canvas.height = windowHeight + 'px';
+        canvas.style.width = (windowHeight * gameRatio) + 'px';
+        canvas.style.height = windowHeight + 'px';
     }
 
 
