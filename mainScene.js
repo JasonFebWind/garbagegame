@@ -84,6 +84,8 @@ var mainScene = {preload: preload,
         type: Phaser.CANVAS,
         width: screenWidth,
         height: screenHeight,
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
         canvas: document.getElementById('canvas'),
         physics: {
             default: 'arcade',
@@ -107,28 +109,24 @@ var mainScene = {preload: preload,
     var recycleText;
     var startBtn;
     var game = new Phaser.Game(config);
-    game.scene.pause('main');
     var gameOver = false;
-    //game.pause();
     window.focus();
-    resize();
-    window.addEventListener('resize', resize, false);
-    function resize() {
-    var canvas = document.querySelector('canvas');
-    var windowWidth = window.innerWidth;
-    var windowHeight = window.innerHeight;
-    var windowRatio = windowWidth / windowHeight;
-    var gameRatio =  game.config.width / game.config.height;
-    if (windowRatio < gameRatio) {
-        canvas.style.width = windowWidth + 'px';
-        canvas.style.height = (windowWidth / gameRatio) + 'px';
-    } else {
-        canvas.style.width = (windowHeight * gameRatio) + 'px';
-        canvas.style.height = windowHeight + 'px';
-    }
-
-
-}
+    //resize();
+   // window.addEventListener('resize', resize, false);
+//     function resize() {
+//     var canvas = document.querySelector('canvas');
+//     var windowWidth = window.innerWidth;
+//     var windowHeight = window.innerHeight;
+//     var windowRatio = windowWidth / windowHeight;
+//     var gameRatio =  game.config.width / game.config.height;
+//     if (windowRatio < gameRatio) {
+//         canvas.style.width = windowWidth + 'px';
+//         canvas.style.height = (windowWidth / gameRatio) + 'px';
+//     } else {
+//         canvas.style.width = (windowHeight * gameRatio) + 'px';
+//         canvas.style.height = windowHeight + 'px';
+//     }
+// }
 
     function preload ()
     {   
@@ -143,10 +141,6 @@ var mainScene = {preload: preload,
                 this.load.image(garbage["name_cn"],garbage["icon"]);
             }
         }
-        //load garbage - wet
-        // this.load.image('香蕉','local_asset/waste_category/wet/banana.png');
-        // this.load.image('西红柿','local_asset/waste_category/wet/icons8-tomato.png')
-
     }
 
     function create ()
