@@ -79,6 +79,7 @@ let screenHeight = window.screen.height * window.devicePixelRatio;
 var mainScene = {preload: preload,
             create: create,
             update: update,
+            resize: resize,
             key: 'main'}
     var config = {
         type: Phaser.CANVAS,
@@ -111,22 +112,22 @@ var mainScene = {preload: preload,
     var game = new Phaser.Game(config);
     var gameOver = false;
     window.focus();
-    //resize();
-   // window.addEventListener('resize', resize, false);
-//     function resize() {
-//     var canvas = document.querySelector('canvas');
-//     var windowWidth = window.innerWidth;
-//     var windowHeight = window.innerHeight;
-//     var windowRatio = windowWidth / windowHeight;
-//     var gameRatio =  game.config.width / game.config.height;
-//     if (windowRatio < gameRatio) {
-//         canvas.style.width = windowWidth + 'px';
-//         canvas.style.height = (windowWidth / gameRatio) + 'px';
-//     } else {
-//         canvas.style.width = (windowHeight * gameRatio) + 'px';
-//         canvas.style.height = windowHeight + 'px';
-//     }
-// }
+    resize();
+    window.addEventListener('resize', resize, false);
+    function resize() {
+    var canvas = document.querySelector('canvas');
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
+    var windowRatio = windowWidth / windowHeight;
+    var gameRatio =  game.config.width / game.config.height;
+    if (windowRatio < gameRatio) {
+        canvas.style.width = windowWidth + 'px';
+        canvas.style.height = (windowWidth / gameRatio) + 'px';
+    } else {
+        canvas.style.width = (windowHeight * gameRatio) + 'px';
+        canvas.style.height = windowHeight + 'px';
+    }
+}
 
     function preload ()
     {   
