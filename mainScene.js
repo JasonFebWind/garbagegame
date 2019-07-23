@@ -85,7 +85,7 @@ var mainScene = {preload: preload,
         type: Phaser.CANVAS,
         width: screenWidth,
         height: screenHeight,
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         canvas: document.getElementById('canvas'),
         physics: {
