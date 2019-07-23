@@ -74,8 +74,8 @@ document.body.appendChild(myCustomCanvas);
 // var myCustomContext = myCustomCanvas.getContext('webgl2', contextCreationConfig);
 
  // * window.devicePixelRatio
-let screenWidth = window.screen.width * window.devicePixelRatio;
-let screenHeight = window.screen.height * window.devicePixelRatio;
+let screenWidth = window.screen.width;
+let screenHeight = window.screen.height;
 var mainScene = {preload: preload,
             create: create,
             update: update,
@@ -85,7 +85,7 @@ var mainScene = {preload: preload,
         type: Phaser.CANVAS,
         width: screenWidth,
         height: screenHeight,
-        mode: Phaser.Scale.RESIZE,
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         canvas: document.getElementById('canvas'),
         physics: {
