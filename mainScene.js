@@ -59,6 +59,19 @@ myCustomCanvas.id = 'canvas';
 
 document.body.appendChild(myCustomCanvas);
 
+//  It's important to set the WebGL context values that Phaser needs:
+var contextCreationConfig = {
+    alpha: false,
+    depth: false,
+    antialias: true,
+    premultipliedAlpha: true,
+    stencil: true,
+    preserveDrawingBuffer: false,
+    failIfMajorPerformanceCaveat: false,
+    powerPreference: 'default'
+};
+
+var myCustomContext = myCustomCanvas.getContext('webgl2', contextCreationConfig);
 //start of game
 
 var IntroScene = new Phaser.Class({
@@ -84,10 +97,11 @@ var mainScene = {preload: preload,
             update: update,
             key: 'main'}
     var config = {
-        type: Phaser.CANVAS,
+        type: Phaser.WEBGL,
         width: screenWidth,
         height: screenHeight,
         canvas: document.getElementById('canvas'),
+        context: myCustomContext,
         physics: {
             default: 'arcade',
             arcade: {
