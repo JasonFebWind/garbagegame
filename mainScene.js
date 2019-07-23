@@ -60,35 +60,19 @@ myCustomCanvas.id = 'canvas';
 document.body.appendChild(myCustomCanvas);
 
 //  It's important to set the WebGL context values that Phaser needs:
-var contextCreationConfig = {
-    alpha: false,
-    depth: false,
-    antialias: true,
-    premultipliedAlpha: true,
-    stencil: true,
-    preserveDrawingBuffer: false,
-    failIfMajorPerformanceCaveat: false,
-    powerPreference: 'default'
-};
+// var contextCreationConfig = {
+//     alpha: false,
+//     depth: false,
+//     antialias: true,
+//     premultipliedAlpha: true,
+//     stencil: true,
+//     preserveDrawingBuffer: false,
+//     failIfMajorPerformanceCaveat: false,
+//     powerPreference: 'default'
+// };
 
-var myCustomContext = myCustomCanvas.getContext('webgl2', contextCreationConfig);
-//start of game
+// var myCustomContext = myCustomCanvas.getContext('webgl2', contextCreationConfig);
 
-var IntroScene = new Phaser.Class({
-    Extends:Phaser.Scene,
-    initialize:function IntroScene(config){
-        
-    },
-    preload:function preload(){
-        
-    },
-    create: function create(){
-
-    },
-
-});
-
-var introScene = new IntroScene({"key":"intro"});
  // * window.devicePixelRatio
 let screenWidth = window.screen.width * window.devicePixelRatio;
 let screenHeight = window.screen.height * window.devicePixelRatio;
@@ -97,11 +81,10 @@ var mainScene = {preload: preload,
             update: update,
             key: 'main'}
     var config = {
-        type: Phaser.WEBGL,
+        type: Phaser.CANVAS,
         width: screenWidth,
         height: screenHeight,
         canvas: document.getElementById('canvas'),
-        context: myCustomContext,
         physics: {
             default: 'arcade',
             arcade: {
@@ -110,13 +93,14 @@ var mainScene = {preload: preload,
         },
         scene: [mainScene]
     };
+    //game global params
     var currentScene;
     var cursor;
     var totalCount = 5;
     var scoreLabel;
     var score = 0;
     var bin;
-    var binType = 2;
+    var binType = "2";
     var currentChallengeType = 2;
     var timer;
 
@@ -130,9 +114,7 @@ var mainScene = {preload: preload,
     resize();
     window.addEventListener('resize', resize, false);
     function resize() {
-        console.log("window resized");
     var canvas = document.querySelector('canvas');
-    console.log(canvas.id);
     var windowWidth = window.innerWidth;
     var windowHeight = window.innerHeight;
     var windowRatio = windowWidth / windowHeight;
@@ -223,7 +205,8 @@ var mainScene = {preload: preload,
             return;
         }
         gameobj1.destroy();
-        if(binType != gameobj1.key){
+        console.log("comparing " + binType + " and " + gameobj1.key.split("-")[0]);
+        if(binType != gameobj1.key.split("-")[0]){
             renderGameOver(gameobj1);
             destroyGarbages()
             timer.destroy();
@@ -235,6 +218,12 @@ var mainScene = {preload: preload,
         console.log("colliding between" + gameobj1.key + "and" + gameobj2.key);
     }
      var garbageGroup = new Array();
+
+    /**
+    * @method
+    * @abstract - called to elminate all garbage sprites
+    *
+    */
     function destroyGarbages(){
         for (i=0;i<garbageGroup.length;i++)
         {
@@ -242,11 +231,19 @@ var mainScene = {preload: preload,
         }
     }
 
+    //game over panel objects
     var gameOverText;
     var restartBtn;
     var descriptionText;
     var finalScoreText;
+  	/**
+    * @method
+    * @abstract - called to render game over panel
+    * @param garbage Garbage Sprite
+    */
     function renderGameOver(garbage){
+     score = 0;
+     //get garbage params
      var garbageParams = garbage.key.split("-");
      var garbageType = "";
      switch(garbageParams[0]){
@@ -265,8 +262,7 @@ var mainScene = {preload: preload,
         default:
             break;
      }
-     console.log("garbage is " + garbageParams[0]);
-
+     //initiate graphics
      graphics = currentScene.add.graphics({ lineStyle: { width: 2, color: 0xaa0000 }, fillStyle: { color:0xaa0000} });
 
      panel_square = new Phaser.Geom.Rectangle();
@@ -277,20 +273,22 @@ var mainScene = {preload: preload,
    
      graphics.fillRectShape(panel_square);
 
-    var finalScoreTextConfig = {fontFamily: "Roboto Condensed",fontSize:'120px',padding:{x:10,y:10}}
+     //initiate score text object
+     var finalScoreTextConfig = {fontFamily: "Roboto Condensed",fontSize:'120px',padding:{x:10,y:10}}
      finalScoreText = currentScene.add.text(screenWidth/2 - 100, screenHeight/2 - 400, scoreLabel.text, finalScoreTextConfig);
      finalScoreText.x = screenWidth/2 - finalScoreText.width/2;
 
-     //add components to panel
+     //initiate game over text object
      var btnTextConfig = {fontFamily: "Roboto Condensed",fontSize:'80px',padding:{x:10,y:10}}
      gameOverText = currentScene.add.text(screenWidth/2 - 100, screenHeight/2 - 200, '游戏结束', btnTextConfig);
      gameOverText.x = screenWidth/2 - gameOverText.width/2;
 
+     //initiate description text object
      var descriptionTextConfig = {fontFamily: "Roboto Condensed",fontSize:'40px',padding:{x:10,y:10}}
      descriptionText = currentScene.add.text(screenWidth/2 - 100, screenHeight/2 - 100, garbageParams[1] + "应该是" + garbageType, descriptionTextConfig);
      descriptionText.x = screenWidth/2 - descriptionText.width/2;
 
-
+     //initiate restart button object
      restartBtn = currentScene.add.sprite(screenWidth/2,screenHeight/2 + 200,'restartBtn').setInteractive();
      restartBtn.inputEnabled = true;
      restartBtn.key = "restartBtn";
@@ -298,7 +296,11 @@ var mainScene = {preload: preload,
      restartBtn.on('pointerdown',restartBtnClicked);
 
     }
-
+    /**
+    * @method
+    * @abstract - reset scene
+    *
+    */
     function restartBtnClicked(pointer){
         console.log("restart btn clicked");
         graphics.clear();
@@ -320,6 +322,11 @@ var mainScene = {preload: preload,
     function update (){
         
     }
+    /**
+    * @method
+    * @abstract - generate garbage sprites at random start point
+    *
+    */
     function generateGarbage(){
         //create garbage
         let randomX = Phaser.Math.Between(20,screenWidth-20);
